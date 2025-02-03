@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import { setUserToState } from "../store/user.slice";
+import styled from "styled-components"
 
 const passwordRegex = /^(?=.*[A-Z])(?=.*[\W]).{8,}$/;
 
@@ -19,7 +20,36 @@ const initialValues = {
   password: "",
 };
 
+// * styled components
+const StyledForm = styled(Form)`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+`
+const StyledWrapper = styled.div `
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+`
+
+const StyledError = styled(ErrorMessage) `
+  color: red;
+  font: 0.8rem;
+`
+
+const StyledButton = styled.button `
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+`
+
 const LoginForm = () => {
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
 
@@ -37,6 +67,7 @@ const LoginForm = () => {
   
   const handleLogin = async (values) => {
     try {
+      setLoading(true)
       const response = await axios.post("https://server-setup-express.vercel.app/api/auth/login", {
         email: values.email,
         password: values.password,
@@ -55,6 +86,8 @@ const LoginForm = () => {
         setError(error.response.data.message);
         return;
       }
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -68,33 +101,35 @@ const LoginForm = () => {
         onSubmit={async (values) => {
           await handleLogin(values);
         }}>
-        <Form>
-          <div className="">
+        <StyledForm>
+          <StyledWrapper>
             <label htmlFor="email">Email</label>
             <Field
               type="email"
               id="email"
               name="email"
+              placeholder="enter your email"
             />
-            <ErrorMessage
+            <StyledError
               name="email"
-              component="div"
+              component="p"
             />
-          </div>
-          <div className="">
+          </StyledWrapper>
+          <StyledWrapper>
             <label htmlFor="password">Password</label>
             <Field
               type="password"
               id="password"
               name="password"
+              placeholder="enter your password"
             />
-            <ErrorMessage
+            <StyledError
               name="password"
-              component="div"
+              component="p"
             />
-          </div>
-          <button type="submit">Login</button>
-        </Form>
+          </StyledWrapper>
+          <StyledButton disabled={loading} type="submit">{loading ? "working on it..." : "login"}</StyledButton>
+        </StyledForm>
       </Formik>
     </div>
   );

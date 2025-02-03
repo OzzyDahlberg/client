@@ -32,9 +32,12 @@ const LoginForm = () => {
   }, [error]);
 
   // handle login
+  
+  // = https://server-ruddy.vercel.app/api/auth/login
+  
   const handleLogin = async (values) => {
     try {
-      const response = await axios.post("https://server-ruddy.vercel.app/api/auth/login", {
+      const response = await axios.post("https://server-setup-express.vercel.app/api/auth/login", {
         email: values.email,
         password: values.password,
       });
